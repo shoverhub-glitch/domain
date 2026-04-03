@@ -1,29 +1,41 @@
 # domain
 
-This project is ready to deploy to Cloudflare Pages.
+This project is configured for GitHub Pages without a custom domain.
 
-## Cloudflare Pages
+## GitHub Pages setup
 
-- Framework preset: `Vite`
 - Build command: `npm run build`
 - Build output directory: `dist`
+- Deploy method: manual upload (no GitHub Actions)
+- Site URL format: `https://<your-github-username>.github.io/domain/`
 
-## SPA routing
+## Base path
 
-This app uses React Router with client-side routes such as `/app-development`.
+This repo is configured as a GitHub Pages project site using base path `/domain/` in `vite.config.ts`.
+If you rename the repository, update the `base` value to match the new repo name.
 
-Cloudflare Pages needs a fallback rule so direct visits and refreshes on those routes resolve to the app entry point. That rule is already included in [public/_redirects](public/_redirects):
+## SPA routing on GitHub Pages
 
-```text
-/* /index.html 200
-```
+This app uses React Router with client-side routes (for example `/app-development`).
 
-## Deploy steps
+GitHub Pages does not support server rewrites, so this repository includes the SPA fallback approach:
 
-1. Push this repository to GitHub.
-2. In Cloudflare Pages, create a new project and connect this repository.
-3. Use the build settings listed above.
-4. Deploy.
+- `public/404.html` redirects unknown paths to `/?/...`
+- `src/main.tsx` restores the original route before React Router mounts
+
+This keeps direct visits and browser refreshes on nested routes working on GitHub Pages.
+
+## Manual deploy (without GitHub Actions)
+
+1. Run `npm install` and `npm run build` locally.
+2. Open `dist` and upload its contents to the branch used by GitHub Pages (commonly `gh-pages`), at repository root.
+3. In GitHub: `Settings -> Pages -> Build and deployment -> Source`, select `Deploy from a branch`.
+4. Select your Pages branch (for example `gh-pages`) and folder `/ (root)`.
+5. Save.
+
+For every new release, rebuild locally and upload updated `dist` contents again.
+
+No DNS setup is required when using the default github.io URL.
 
 ## Local verification
 
@@ -31,5 +43,3 @@ Cloudflare Pages needs a fallback rule so direct visits and refreshes on those r
 npm install
 npm run build
 ```
-
-The production build has been verified successfully.
